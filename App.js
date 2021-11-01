@@ -15,8 +15,6 @@ import RootStackScreen from './screens/RootStackScreen';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import HomeScreen from './screens/HomeScreen';
-
 import MainTabScreen from './screens/MainTabScreen';
 
 const App = () => {

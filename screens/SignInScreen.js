@@ -125,7 +125,6 @@ const SignInScreen = ({navigation}) => {
             placeholder="Your Email"
             style={styles.textInput}
             autoCapitalize="none"
-            // onChangeText={val => textInputChange(val)}
             onChangeText={val => emailValidator(val)}
             onEndEditing={e => handleValidUser(e.nativeEvent.text)}
           />

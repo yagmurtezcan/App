@@ -25,12 +25,7 @@ const MyTabs = () => {
             tabBarLabel: 'Home',
             tabBarColor: '#009387',
             tabBarIcon: ({color}) => (
-              <FontAwesome
-                name={'home'}
-                // style={[{color: '#FCFCFC'}]}
-                color={color}
-                size={26}
-              />
+              <FontAwesome name={'home'} color={color} size={26} />
             ),
           }}></Tab.Screen>
         <Tab.Screen
@@ -41,12 +36,7 @@ const MyTabs = () => {
             tabBarColor: '#1f65ff',
             tabBarIcon: ({color}) => (
               <View>
-                <FontAwesome
-                  name={'user'}
-                  //   style={[{color: '#FCFCFC'}]}
-                  color={color}
-                  size={26}
-                />
+                <FontAwesome name={'user'} color={color} size={26} />
               </View>
             ),
           }}></Tab.Screen>

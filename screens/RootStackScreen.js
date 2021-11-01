@@ -6,6 +6,7 @@ import SignInScreen from './SignInScreen';
 import SignUpScreen from './SignUpScreen';
 import SplashScreen from './SplashScreen';
 import HomeScreen from './HomeScreen';
+import MainTabScreen from './MainTabScreen';
 
 const RootStack = createNativeStackNavigator();
 
@@ -26,6 +27,10 @@ const RootStackScreen = () => {
           component={SignUpScreen}
           options={{headerShown: false}}></RootStack.Screen>
         <RootStack.Screen name="Home" component={HomeScreen}></RootStack.Screen>
+        {/* <RootStack.Screen
+          name="MainTabScreen"
+          component={MainTabScreen}
+          options={{headerShown: false}}></RootStack.Screen> */}
       </RootStack.Navigator>
     </NavigationContainer>
   );
