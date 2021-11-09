@@ -44,12 +44,15 @@ const SignUpScreen = ({navigation}) => {
         check_passwordMatch: true,
       });
       return console.log('OK.');
-    } else if (data.password != data.confirm_password) {
+    } else if (
+      data.password !== data.confirm_password ||
+      data.confirm_password !== null
+    ) {
       setData({
         ...data,
         check_passwordMatch: false,
       });
-      console.log('Passwords dont match');
+      return console.log('Passwords dont match');
     }
   };
 
@@ -176,7 +179,7 @@ const SignUpScreen = ({navigation}) => {
             style={styles.textInput}
             autoCapitalize="none"
             onChangeText={val => handlePasswordChange(val)}
-            onChange={e => setData(e.target.value)}
+            // onChange={e => setData(e.target.value)}
             onBlur={onVerifyNewPassword}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
@@ -207,7 +210,7 @@ const SignUpScreen = ({navigation}) => {
             style={styles.textInput}
             autoCapitalize="none"
             onChangeText={val => handleConfirmPasswordChange(val)}
-            onChange={e => setData(e.target.value)}
+            // onChange={e => setData(e.target.value)}
             onBlur={onVerifyNewPassword}
           />
           <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
