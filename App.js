@@ -7,7 +7,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, Button, ActivityIndicator} from 'react-native';
+import {View, StatusBar} from 'react-native';
 
 import {AuthContext} from './components/context';
 
@@ -17,9 +17,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import MainTabScreen from './screens/MainTabScreen';
 
+import LottieView from 'lottie-react-native';
+
+import {
+  NavigationContainer,
+  DefaultTheme as NavigationDefaultTheme,
+  DarkTheme as NavigationDarkTheme,
+} from '@react-navigation/native';
+
+import {
+  Provider as PaperProvider,
+  DefaultTheme as PaperDefaultTheme,
+  DarkTheme as PaperDarkTheme,
+} from 'react-native-paper';
+
 const App = () => {
   // const [isLoading, setIsLoading] = React.useState(true);
   // const [userToken, setUserToken] = React.useState(null);
+
+  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
   const initialLoginState = {
     // bu kısımda baslangıc statelerimizi kaydetttik.
@@ -27,6 +43,26 @@ const App = () => {
     userName: null,
     userToken: null,
   };
+
+  const CustomDefaultTheme = {
+    ...NavigationDefaultTheme,
+    ...PaperDefaultTheme,
+    colors: {
+      ...NavigationDefaultTheme.colors,
+      ...PaperDefaultTheme.colors,
+    },
+  };
+
+  const CustomDarkTheme = {
+    ...NavigationDarkTheme,
+    ...PaperDarkTheme,
+    colors: {
+      ...NavigationDarkTheme.colors,
+      ...PaperDarkTheme.colors,
+    },
+  };
+
+  const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
   // bu fonksiyonla uygulama ilk acıldığında kullanıcının ilk başta önceden login olup olmadığını kontrol edecek.
   const loginReducer = (previousState, action) => {
@@ -105,6 +141,9 @@ const App = () => {
         // setUserToken('fghj');
         // setIsLoading(false);
       },
+      toggleTheme: () => {
+        setIsDarkTheme(isDarkTheme => !isDarkTheme);
+      },
     }),
     [],
   ); // buranın yeniden render olması için [] koyduk
@@ -122,26 +161,35 @@ const App = () => {
       }
       // console.log('user token', userToken);
       dispatch({type: 'REGISTER', token: userToken});
-    }, 1000);
+    }, 500);
   }, []);
 
   if (loginState.isLoading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size="large" />
+        <LottieView source={require('./assets/social.json')} autoPlay loop />
       </View>
     );
   }
 
   return (
-    <AuthContext.Provider value={authContext}>
-      {loginState.userToken != null ? (
-        //<HomeScreen></HomeScreen>
-        <MainTabScreen></MainTabScreen>
-      ) : (
-        <RootStackScreen></RootStackScreen>
-      )}
-    </AuthContext.Provider>
+    <PaperProvider theme={theme}>
+      <AuthContext.Provider value={authContext}>
+        {isDarkTheme ? (
+          <StatusBar backgroundColor="#FF6347" barStyle="light-content" />
+        ) : (
+          <StatusBar backgroundColor="#FF6347" barStyle="dark-content" />
+        )}
+        {loginState.userToken != null ? (
+          //<HomeScreen></HomeScreen>
+          <NavigationContainer theme={theme}>
+            <MainTabScreen></MainTabScreen>
+          </NavigationContainer>
+        ) : (
+          <RootStackScreen></RootStackScreen>
+        )}
+      </AuthContext.Provider>
+    </PaperProvider>
   );
 };
 

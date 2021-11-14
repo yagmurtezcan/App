@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions, SafeAreaView} from 'react-native';
+import {View, StyleSheet, SafeAreaView} from 'react-native';
 import {
   Avatar,
   Title,

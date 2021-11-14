@@ -9,12 +9,24 @@ import {
   StatusBar,
 } from 'react-native';
 
+import {useTheme} from '@react-navigation/native';
+
+import {
+  NativeBaseProvider,
+  useColorMode,
+  Center,
+  Button,
+  useColorModeValue,
+} from 'native-base';
+
 import {SwipeListView} from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Notifications from '../model/Notifications';
 
 const NotificationScreen = () => {
+  const {colors} = useTheme();
+
   const [listData, setListData] = useState(
     Notifications.map((NotificationsItem, index) => ({
       key: `${index}`, // butun itemlar için key tanımladık.
@@ -195,8 +207,10 @@ const NotificationScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content" /> */}
+    <View
+      style={styles.container}
+      backgroundColor={colors.background}
+      shadowColor={colors.background}>
       <SwipeListView
         data={listData}
         renderItem={renderItem}
