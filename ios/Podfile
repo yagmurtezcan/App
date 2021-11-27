@@ -19,6 +19,8 @@ target 'StackProject' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RNCMaskedView', :path => '../node_modules/@react-native-masked-view/masked-view'
+
   target 'StackProjectTests' do
     inherit! :complete
     # Pods for testing

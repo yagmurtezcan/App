@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -15,13 +15,11 @@ import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
-import {AuthContext} from '../components/context';
-
-import Users from '../model/users';
+import {AuthContext} from '../navigation/AuthProvider';
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = React.useState({
-    username: '',
+    email: '',
     password: '',
     check_textInputChange: false,
     secureTextEntry: true,
@@ -29,21 +27,21 @@ const SignInScreen = ({navigation}) => {
     isValidPassword: true,
   });
 
-  const {signIn} = React.useContext(AuthContext); // bunu ekledikten sonra aşağıda signın button içine gidip bu fonksiyonu eklememiz lazım tıklandığında ne yapacağını anlaması için
+  const {login} = useContext(AuthContext);
 
   const emailValidator = val => {
     const re = /\S+@\S+\.\S+/;
     if (re.test(val) == true) {
       setData({
         ...data,
-        username: val,
+        email: val,
         check_textInputChange: true,
         isValidUser: true, // check işareti için satırı ekledik artık valid bir email girilmediyse check işareti olmayacak
       });
     } else {
       setData({
         ...data,
-        username: val,
+        email: val,
         check_textInputChange: false,
         isValidUser: false,
       });
@@ -89,26 +87,17 @@ const SignInScreen = ({navigation}) => {
   };
 
   const loginHandle = (userName, password) => {
-    const foundUser = Users.filter(item => {
-      return userName == item.username && password == item.password; // item.username dediğimiz users.js içerisindeki username
-    });
+    // const foundUser = Users.filter(item => {
+    //   return userName == item.email && password == item.password; // item.username dediğimiz users.js içerisindeki username
+    // });
 
-    if (data.username.length == 0 || data.password.length == 0) {
-      Alert.alert(
-        'Wrong Input!',
-        'Username or password field cannot be empty',
-        [{text: 'Okay'}],
-      );
-      return;
-    }
-
-    if (foundUser.length == 0) {
-      Alert.alert('Invalid User!', 'Username or password is incorrect', [
-        {text: 'Okay'},
-      ]);
-      return;
-    }
-    signIn(foundUser);
+    // if (data.email.length == 0) {
+    //   Alert.alert('Invalid User!', 'Username or password is incorrect', [
+    //     {text: 'Okay'},
+    //   ]);
+    //   return;
+    // }
+    login();
   };
 
   return (
@@ -175,7 +164,16 @@ const SignInScreen = ({navigation}) => {
           <TouchableOpacity
             style={styles.signIn}
             onPress={() => {
-              loginHandle(data.username, data.password);
+              if (data.email.length == 0 || data.password.length == 0) {
+                Alert.alert(
+                  'Wrong Input!',
+                  'Username or password field cannot be empty',
+                  [{text: 'Okay'}],
+                );
+                return;
+              } else {
+                login(data.email, data.password);
+              }
             }}>
             <LinearGradient
               colors={['#08d4c4', '#01ab9d']}

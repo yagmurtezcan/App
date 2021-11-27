@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet, Button} from 'react-native';
 
-import {AuthContext} from '../components/context';
+import {AuthContext} from '../navigation/AuthProvider';
 
 import {useTheme, Switch, TouchableRipple} from 'react-native-paper';
 
 const HomeScreen = () => {
   const paperTheme = useTheme();
 
-  const {signOut, toggleTheme} = React.useContext(AuthContext);
+  const {logout, toggleTheme, user} = useContext(AuthContext);
 
   // const [isEnabled, setIsEnabled] = useState(false);
   // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -16,10 +16,11 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
+      <Text>Welcome userID : {user.uid}</Text>
       <Button
         title="Sign Out"
         onPress={() => {
-          signOut();
+          logout();
         }}></Button>
       <TouchableRipple
         onPress={() => {

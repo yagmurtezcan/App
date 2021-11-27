@@ -10,7 +10,7 @@ export const Container = styled.View`
 export const Card = styled.View`
   background-color: #f8f8f8;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   border-radius: 10px;
 `;
 
@@ -18,6 +18,7 @@ export const UserInfo = styled.View`
   flex-direction : row
   justify-content : flex-start
   padding : 15px;
+  
 `;
 
 export const UserImg = styled.Image`

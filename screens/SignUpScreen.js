@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -15,15 +15,11 @@ import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
-import {AuthContext} from '../components/context';
-
-import {useForm} from 'react-hook-form';
-
-import Users from '../model/users';
+import {AuthContext} from '../navigation/AuthProvider';
 
 const SignUpScreen = ({navigation}) => {
-  const [data, setData] = React.useState({
-    username: '',
+  const [data, setData] = useState({
+    email: '',
     password: '',
     confirm_password: '',
     check_textInputChange: false,
@@ -35,7 +31,7 @@ const SignUpScreen = ({navigation}) => {
     check_passwordMatch: true,
   });
 
-  const {signIn} = React.useContext(AuthContext);
+  const {register} = useContext(AuthContext);
 
   const onVerifyNewPassword = () => {
     if (data.password == data.confirm_password) {
@@ -61,14 +57,14 @@ const SignUpScreen = ({navigation}) => {
     if (re.test(val) == true) {
       setData({
         ...data,
-        username: val,
+        email: val,
         check_textInputChange: true,
         isValidUser: true, // check işareti için satırı ekledik artık valid bir email girilmediyse check işareti olmayacak
       });
     } else {
       setData({
         ...data,
-        username: val,
+        email: val,
         check_textInputChange: false,
         isValidUser: false,
       });
@@ -180,7 +176,8 @@ const SignUpScreen = ({navigation}) => {
             autoCapitalize="none"
             onChangeText={val => handlePasswordChange(val)}
             // onChange={e => setData(e.target.value)}
-            onBlur={onVerifyNewPassword}
+            // onBlur={onVerifyNewPassword}
+            onEndEditing={e => onVerifyNewPassword(e.nativeEvent.text)}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? ( // eğer data secure entry true ise eye off kullan değilse eye kullan dicez bu sayede tıklandığında ikon değişsecek  : dan sonra aksi takdirde eye kullan dedik
@@ -211,7 +208,8 @@ const SignUpScreen = ({navigation}) => {
             autoCapitalize="none"
             onChangeText={val => handleConfirmPasswordChange(val)}
             // onChange={e => setData(e.target.value)}
-            onBlur={onVerifyNewPassword}
+            // onBlur={onVerifyNewPassword}
+            onEndEditing={e => onVerifyNewPassword(e.nativeEvent.text)}
           />
           <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
             {data.confirm_secureTextEntry ? ( // eğer data secure entry true ise eye off kullan değilse eye kullan dicez bu sayede tıklandığında ikon değişsecek  : dan sonra aksi takdirde eye kullan dedik
@@ -237,7 +235,44 @@ const SignUpScreen = ({navigation}) => {
         )}
 
         <View style={styles.button}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity
+            onPress={() => {
+              if (data.check_passwordMatch == false) {
+                // Alert.alert(
+                //   'Wrong Input!',
+                //   'Password and password confirm field can be the same',
+                //   [{text: 'Okay'}],
+                // );
+                // return;
+                {
+                  data.check_passwordMatch ? null : ( // nullsa gösterme değilse bu mesajı göster
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                      <Text style={styles.errorMsg}>
+                        Passwords do not match!
+                      </Text>
+                    </Animatable.View>
+                  );
+                }
+              } else if (data.isValidUser == false) {
+                // Alert.alert(
+                //   'Wrong Input!',
+                //   'Please enter a valid email adress',
+                //   [{text: 'Okay'}],
+                // );
+                // return;
+                {
+                  data.isValidUser ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                      <Text style={styles.errorMsg}>
+                        Please enter a valid email address
+                      </Text>
+                    </Animatable.View>
+                  );
+                }
+              } else {
+                register(data.email, data.password);
+              }
+            }}>
             <LinearGradient
               colors={['#08d4c4', '#01ab9d']}
               style={[styles.signIn, {marginTop: 10}]}>
