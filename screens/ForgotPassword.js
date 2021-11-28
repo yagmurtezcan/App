@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -17,34 +17,37 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import {AuthContext} from '../navigation/AuthProvider';
 
-const SignInScreen = ({navigation}) => {
-  const [data, setData] = React.useState({
-    email: '',
+const ForgotPassword = ({navigation}) => {
+  const [data, setData] = useState({
     password: '',
-    check_textInputChange: false,
+    confirm_password: '',
     secureTextEntry: true,
-    isValidUser: true,
+    confirm_secureTextEntry: true,
     isValidPassword: true,
+    isValidConfirmPassword: true,
+    check_passwordMatch: true,
   });
 
   const {login} = useContext(AuthContext);
 
-  const emailValidator = val => {
-    const re = /\S+@\S+\.\S+/;
-    if (re.test(val) == true) {
+  const onVerifyNewPassword = () => {
+    if (data.password == data.confirm_password) {
       setData({
         ...data,
-        email: val,
-        check_textInputChange: true,
-        isValidUser: true, // check işareti için satırı ekledik artık valid bir email girilmediyse check işareti olmayacak
+        check_passwordMatch: true,
+        isValidPassword: true,
       });
-    } else {
+      return console.log('OK.');
+    } else if (
+      data.password !== data.confirm_password ||
+      data.confirm_password == null ||
+      data.password == null
+    ) {
       setData({
         ...data,
-        email: val,
-        check_textInputChange: false,
-        isValidUser: false,
+        check_passwordMatch: false,
       });
+      return console.log('Passwords dont match');
     }
   };
 
@@ -64,6 +67,22 @@ const SignInScreen = ({navigation}) => {
     }
   };
 
+  const handleConfirmPasswordChange = val => {
+    if (val.trim().length >= 8) {
+      setData({
+        ...data,
+        confirm_password: val,
+        isValidConfirmPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        confirm_password: val,
+        isValidConfirmPassword: false,
+      });
+    }
+  };
+
   const updateSecureTextEntry = () => {
     setData({
       ...data,
@@ -71,68 +90,20 @@ const SignInScreen = ({navigation}) => {
     });
   };
 
-  const handleValidUser = val => {
-    const re = /\S+@\S+\.\S+/;
-    if (re.test(val) == true) {
-      setData({
-        ...data,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        isValidUser: false,
-      });
-    }
-  };
-
-  const loginHandle = (userName, password) => {
-    // const foundUser = Users.filter(item => {
-    //   return userName == item.email && password == item.password; // item.username dediğimiz users.js içerisindeki username
-    // });
-
-    // if (data.email.length == 0) {
-    //   Alert.alert('Invalid User!', 'Username or password is incorrect', [
-    //     {text: 'Okay'},
-    //   ]);
-    //   return;
-    // }
-    login();
+  const updateConfirmSecureTextEntry = () => {
+    setData({
+      ...data,
+      confirm_secureTextEntry: !data.confirm_secureTextEntry, // eğer true ise false yap false ise true yap demek bu yani neyse tam tersini yap demek
+    });
   };
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
+        <Text style={styles.text_header}>Password Reset!</Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
-        <Text style={[styles.text_footer, {marginTop: 20}]}>Email</Text>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Your Email"
-            style={styles.textInput}
-            autoCapitalize="none"
-            onChangeText={val => emailValidator(val)}
-            onEndEditing={e => handleValidUser(e.nativeEvent.text)}
-          />
-
-          {data.check_textInputChange ? (
-            <Animatable.View animation="bounceIn">
-              <Feather name="check-circle" color="green" size={20} />
-            </Animatable.View> //datanın check input changei eger true ise >> aşağıdaki ikonu kulaanırsın  :null kısmı ise akti takdirde null a render etmiş oluruz.
-          ) : null}
-        </View>
-
-        {data.isValidUser ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Please enter a valid email address
-            </Text>
-          </Animatable.View>
-        )}
-
         <Text style={[styles.text_footer, {marginTop: 20}]}>Password</Text>
         <View style={styles.action}>
           <Feather name="lock" color="#05375a" size={20} />
@@ -141,10 +112,11 @@ const SignInScreen = ({navigation}) => {
             secureTextEntry={data.secureTextEntry ? true : false} // data.securetextenrt ? true : aksi takdirde false olacak.
             style={styles.textInput}
             autoCapitalize="none"
-            onChangeText={val => handlePasswordChange(val)}
+            onEndEditing={val => onVerifyNewPassword(val.nativeEvent.text)}
+            onChangeText={e => handlePasswordChange(e)}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
-            {data.secureTextEntry ? ( // eğer data secure entry true ise eye off kullan değilse eye kullan dicez bu sayede tıklandığında ikon değişsecek  : dan sonra aksi takdirde eye kullan dedik
+            {data.secureTextEntry ? (
               <Feather name="eye-off" color="grey" size={20} />
             ) : (
               <Feather name="eye" color="grey" size={20} />
@@ -152,7 +124,7 @@ const SignInScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        {data.isValidPassword ? null : ( // nullsa gösterme değilse bu mesajı göster
+        {data.isValidPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
               Password must be 8 characters long
@@ -160,36 +132,78 @@ const SignInScreen = ({navigation}) => {
           </Animatable.View>
         )}
 
-        <Text
-          style={styles.forgotText}
-          onPress={() => navigation.navigate('EmailConfirm')}>
-          Forgot Password
+        <Text style={[styles.text_footer, {marginTop: 20}]}>
+          Confirm Password
         </Text>
+        <View style={styles.action}>
+          <Feather name="lock" color="#05375a" size={20} />
+          <TextInput
+            placeholder="Confirm Your Password"
+            secureTextEntry={data.confirm_secureTextEntry ? true : false}
+            style={styles.textInput}
+            autoCapitalize="none"
+            onEndEditing={val => onVerifyNewPassword(val.nativeEvent.text)}
+            onChangeText={e => handleConfirmPasswordChange(e)}
+          />
+          <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
+            {data.confirm_secureTextEntry ? (
+              <Feather name="eye-off" color="grey" size={20} />
+            ) : (
+              <Feather name="eye" color="grey" size={20} />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {data.isValidConfirmPassword ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMsg}>
+              Password must be 8 characters long
+            </Text>
+          </Animatable.View>
+        )}
+
+        {data.check_passwordMatch ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMsg}>Passwords do not match!</Text>
+          </Animatable.View>
+        )}
 
         <View style={styles.button}>
           <TouchableOpacity
-            style={styles.signIn}
             onPress={() => {
-              if (data.email.length == 0 || data.password.length == 0) {
-                Alert.alert(
-                  'Wrong Input!',
-                  'Username or password field cannot be empty',
-                  [{text: 'Okay'}],
-                );
-                return;
+              if (data.check_passwordMatch == false) {
+                {
+                  data.check_passwordMatch ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                      <Text style={styles.errorMsg}>
+                        Passwords do not match!
+                      </Text>
+                    </Animatable.View>
+                  );
+                }
+              } else if (data.isValidUser == false) {
+                {
+                  data.isValidUser ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                      <Text style={styles.errorMsg}>
+                        Please enter a valid email address
+                      </Text>
+                    </Animatable.View>
+                  );
+                }
               } else {
-                login(data.email, data.password);
+                register(data.email, data.password);
               }
             }}>
             <LinearGradient
               colors={['#08d4c4', '#01ab9d']}
               style={[styles.signIn, {marginTop: 10}]}>
-              <Text style={styles.textSign}>Sign In</Text>
+              <Text style={styles.textSign}>Password Confirm</Text>
             </LinearGradient>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate('SignUp')}
+            onPress={() => navigation.goBack()}
             style={[
               styles.signIn,
               {
@@ -198,7 +212,7 @@ const SignInScreen = ({navigation}) => {
                 borderWidth: 1,
               },
             ]}>
-            <Text style={[styles.textSign, {color: '#009387'}]}>Sign Up</Text>
+            <Text style={[styles.textSign, {color: '#009387'}]}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </Animatable.View>
@@ -206,7 +220,7 @@ const SignInScreen = ({navigation}) => {
   );
 };
 
-export default SignInScreen;
+export default ForgotPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -270,12 +284,6 @@ const styles = StyleSheet.create({
   },
   errorMsg: {
     color: 'red',
-    fontWeight: 'bold',
-  },
-  forgotText: {
-    marginTop: 20,
-    paddingLeft: 200,
-    color: 'green',
     fontWeight: 'bold',
   },
 });

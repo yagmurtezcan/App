@@ -38,11 +38,13 @@ const SignUpScreen = ({navigation}) => {
       setData({
         ...data,
         check_passwordMatch: true,
+        isValidPassword: true,
       });
       return console.log('OK.');
     } else if (
       data.password !== data.confirm_password ||
-      data.confirm_password !== null
+      data.confirm_password == null ||
+      data.password == null
     ) {
       setData({
         ...data,
@@ -174,10 +176,10 @@ const SignUpScreen = ({navigation}) => {
             secureTextEntry={data.secureTextEntry ? true : false} // data.securetextenrt ? true : aksi takdirde false olacak.
             style={styles.textInput}
             autoCapitalize="none"
-            onChangeText={val => handlePasswordChange(val)}
+            onEndEditing={val => onVerifyNewPassword(val.nativeEvent.text)}
             // onChange={e => setData(e.target.value)}
             // onBlur={onVerifyNewPassword}
-            onEndEditing={e => onVerifyNewPassword(e.nativeEvent.text)}
+            onChangeText={e => handlePasswordChange(e)}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? ( // eğer data secure entry true ise eye off kullan değilse eye kullan dicez bu sayede tıklandığında ikon değişsecek  : dan sonra aksi takdirde eye kullan dedik
@@ -206,10 +208,10 @@ const SignUpScreen = ({navigation}) => {
             secureTextEntry={data.confirm_secureTextEntry ? true : false} // data.securetextenrt ? true : aksi takdirde false olacak.
             style={styles.textInput}
             autoCapitalize="none"
-            onChangeText={val => handleConfirmPasswordChange(val)}
+            onEndEditing={val => onVerifyNewPassword(val.nativeEvent.text)}
             // onChange={e => setData(e.target.value)}
             // onBlur={onVerifyNewPassword}
-            onEndEditing={e => onVerifyNewPassword(e.nativeEvent.text)}
+            onChangeText={e => handleConfirmPasswordChange(e)}
           />
           <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
             {data.confirm_secureTextEntry ? ( // eğer data secure entry true ise eye off kullan değilse eye kullan dicez bu sayede tıklandığında ikon değişsecek  : dan sonra aksi takdirde eye kullan dedik

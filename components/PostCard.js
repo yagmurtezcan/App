@@ -67,7 +67,7 @@ const PostCard = ({item, onDelete}) => {
           <Ionicons name="md-chatbubble-outline" size={25} />
           <InteractionText>{commentText}</InteractionText>
         </Interaction>
-        {user.uid == item.userId ? (
+        {user.uid == item.userId ? ( // ekleyen kulanıcı için silme buton gösterilcek diğer userlar için null olacak.
           <Interaction onPress={() => onDelete(item.id)}>
             <Ionicons name="md-trash-bin" size={25} />
           </Interaction>

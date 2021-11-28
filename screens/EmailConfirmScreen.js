@@ -17,17 +17,14 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import {AuthContext} from '../navigation/AuthProvider';
 
-const SignInScreen = ({navigation}) => {
+const EmailConfirmScreen = ({navigation}) => {
   const [data, setData] = React.useState({
     email: '',
-    password: '',
     check_textInputChange: false,
-    secureTextEntry: true,
     isValidUser: true,
-    isValidPassword: true,
   });
 
-  const {login} = useContext(AuthContext);
+  const {sendForgotEmail} = useContext(AuthContext);
 
   const emailValidator = val => {
     const re = /\S+@\S+\.\S+/;
@@ -46,29 +43,6 @@ const SignInScreen = ({navigation}) => {
         isValidUser: false,
       });
     }
-  };
-
-  const handlePasswordChange = val => {
-    if (val.trim().length >= 8) {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: true,
-      });
-    } else {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: false,
-      });
-    }
-  };
-
-  const updateSecureTextEntry = () => {
-    setData({
-      ...data,
-      secureTextEntry: !data.secureTextEntry, // eğer true ise false yap false ise true yap demek bu yani neyse tam tersini yap demek
-    });
   };
 
   const handleValidUser = val => {
@@ -104,7 +78,10 @@ const SignInScreen = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
+        <Text style={styles.text_header}>Forgot Password?</Text>
+        <Text style={styles.text_subHeader}>
+          You can give us your registered email and we will send a reset link
+        </Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <Text style={[styles.text_footer, {marginTop: 20}]}>Email</Text>
@@ -133,63 +110,33 @@ const SignInScreen = ({navigation}) => {
           </Animatable.View>
         )}
 
-        <Text style={[styles.text_footer, {marginTop: 20}]}>Password</Text>
-        <View style={styles.action}>
-          <Feather name="lock" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Your Password"
-            secureTextEntry={data.secureTextEntry ? true : false} // data.securetextenrt ? true : aksi takdirde false olacak.
-            style={styles.textInput}
-            autoCapitalize="none"
-            onChangeText={val => handlePasswordChange(val)}
-          />
-          <TouchableOpacity onPress={updateSecureTextEntry}>
-            {data.secureTextEntry ? ( // eğer data secure entry true ise eye off kullan değilse eye kullan dicez bu sayede tıklandığında ikon değişsecek  : dan sonra aksi takdirde eye kullan dedik
-              <Feather name="eye-off" color="grey" size={20} />
-            ) : (
-              <Feather name="eye" color="grey" size={20} />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        {data.isValidPassword ? null : ( // nullsa gösterme değilse bu mesajı göster
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Password must be 8 characters long
-            </Text>
-          </Animatable.View>
-        )}
-
-        <Text
-          style={styles.forgotText}
-          onPress={() => navigation.navigate('EmailConfirm')}>
-          Forgot Password
-        </Text>
-
         <View style={styles.button}>
           <TouchableOpacity
             style={styles.signIn}
             onPress={() => {
-              if (data.email.length == 0 || data.password.length == 0) {
-                Alert.alert(
-                  'Wrong Input!',
-                  'Username or password field cannot be empty',
-                  [{text: 'Okay'}],
-                );
+              if (data.email.length == 0) {
+                Alert.alert('Wrong Input!', 'Username field cannot be empty', [
+                  {text: 'Okay'},
+                ]);
                 return;
               } else {
-                login(data.email, data.password);
+                sendForgotEmail(data.email);
+                // forgot password ekranına yönlendirmek istediğinde aşağıdaki kodu acarsın.
+                // navigation.navigate('ForgotPassword');
+                navigation.navigate('SignIn');
               }
             }}>
             <LinearGradient
               colors={['#08d4c4', '#01ab9d']}
               style={[styles.signIn, {marginTop: 10}]}>
-              <Text style={styles.textSign}>Sign In</Text>
+              <Text style={styles.textSign}>Send</Text>
             </LinearGradient>
           </TouchableOpacity>
 
+          {/* sistem suanda firebase link gönderdiğinde EmailConfirmScreenden SignIn screene yonlendirmeli calısıyor.
+          
           <TouchableOpacity
-            onPress={() => navigation.navigate('SignUp')}
+            onPress={() => navigation.navigate('SignIn')}
             style={[
               styles.signIn,
               {
@@ -198,15 +145,15 @@ const SignInScreen = ({navigation}) => {
                 borderWidth: 1,
               },
             ]}>
-            <Text style={[styles.textSign, {color: '#009387'}]}>Sign Up</Text>
-          </TouchableOpacity>
+            <Text style={[styles.textSign, {color: '#009387'}]}>Sign In</Text>
+          </TouchableOpacity> */}
         </View>
       </Animatable.View>
     </View>
   );
 };
 
-export default SignInScreen;
+export default EmailConfirmScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -231,6 +178,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 30,
     fontWeight: 'bold',
+  },
+  text_subHeader: {
+    color: '#fff',
+    fontSize: 15,
+    marginTop: 10,
   },
   text_footer: {
     color: '#05375a',

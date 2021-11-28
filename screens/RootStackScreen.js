@@ -11,6 +11,8 @@ import SignInScreen from './SignInScreen';
 import SignUpScreen from './SignUpScreen';
 import SplashScreen from './SplashScreen';
 import HomeScreen from './HomeScreen';
+import ForgotPassword from './ForgotPassword';
+import EmailConfirmScreen from './EmailConfirmScreen';
 
 const RootStack = createNativeStackNavigator();
 
@@ -53,6 +55,21 @@ const RootStackScreen = () => {
           <RootStack.Screen
             name="Home"
             component={HomeScreen}></RootStack.Screen>
+          <RootStack.Screen
+            name="ForgotPassword"
+            component={ForgotPassword}
+            options={{headerShown: false}}></RootStack.Screen>
+          <RootStack.Screen
+            name="EmailConfirm"
+            component={EmailConfirmScreen}
+            options={{
+              headerShown: true,
+              headerBackVisible: true,
+              headerStyle: {backgroundColor: '#009387'},
+              headerTitle: '',
+              headerTitleStyle: {color: '#fff'},
+              headerTintColor: '#fff',
+            }}></RootStack.Screen>
         </RootStack.Navigator>
       )}
     </NavigationContainer>

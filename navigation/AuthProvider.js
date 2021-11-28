@@ -48,6 +48,20 @@ export const AuthProvider = ({children}) => {
             console.log(e);
           }
         },
+        sendForgotEmail: async email => {
+          try {
+            await auth().sendPasswordResetEmail(email);
+            Alert.alert(
+              'Check your email!',
+              'We send your password reset link to your registered email.',
+            );
+          } catch (e) {
+            console.log(e);
+            Alert.alert('Invalid User!', 'Username is incorrect', [
+              {text: 'Okay'},
+            ]);
+          }
+        },
       }}>
       {children}
     </AuthContext.Provider>
